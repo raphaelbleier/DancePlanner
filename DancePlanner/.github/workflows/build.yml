@@ -1,0 +1,32 @@
+name: Build iOS App
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Archive
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Build App
+        # Note: This builds a simulator build (unsigned) for testing compilation.
+        # To build a real IPA for a device, you need to set up Code Signing with Fastlane or manual certificates.
+        run: |
+          xcodebuild build \
+            -scheme "DancePlanner" \
+            -destination "generic/platform=iOS" \
+            -configuration Release \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
